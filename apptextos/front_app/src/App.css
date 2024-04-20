@@ -1,0 +1,98 @@
+.centrar{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+}
+
+.title{
+  font-size: 50px;
+  text-align: center;
+  color: #ff3333;
+}
+
+
+.context-title{
+  font-size: 30px;
+  text-align: center;
+  color: #ff3333;
+}
+
+
+.context{
+  font-size: 20px;
+  text-align: center;
+}
+
+.formpadd{
+  padding-left: 15rem !important;
+  padding-right: 15rem !important;
+  padding-bottom: 2rem !important;
+}
+
+.option1{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2rem;
+  color: #00ff00;
+
+}
+
+.option2{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2rem;
+  color: #ff9933;
+
+}
+
+
+
+.centrarbot{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+.bot{
+
+  max-width: 10rem !important;
+  width: 100% !important;
+
+}
+
+.centres{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2rem;
+  
+}
+
+.greeting{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2rem;
+  font-family: cursive;
+  color: #ffff00;
+  
+}
+
+
+
+.fondo {
+  background-color: #282c34;
+  color: #33ffff;
+  padding: 50px;
+}
