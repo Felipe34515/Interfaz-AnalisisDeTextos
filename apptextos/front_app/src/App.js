@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { Form, Row, Button } from 'react-bootstrap';
+import { Form, Row, Button, Col } from 'react-bootstrap';
 import { useState } from "react";
 
 
@@ -92,100 +92,78 @@ function App() {
 
 
   return (
-    <div className='fondo'>
-    <div className="container">
-      <Row>
-        <div className='centrar'>
-          <h1 className='title'>PROYECTO 1 - ANALÍTICA DE TEXTOS</h1>
-          <h1>INTELIGENCIA DE NEGOCIOS</h1>
-          <h3>Grupo 15</h3>
-          <h3>Santiago Pardo, Felipe Rueda y Luis Plazas</h3>
+
+<div className='fondo'>
+  <div className="container">
+    <Row>
+      <div className='Banner'>
+        <h1 className="title">Proyecto analítica de Textos</h1>
+        <p className="subtitle">Grupo 15: Santiago Pardo, Felipe Rueda y Luis Plazas</p>
+      </div>
+    </Row>
+    <Row>
+      <Col className='columnaderecha'>
+        <div className='archivo-reseña-container'>
+          <div className='archivo'>
+            <Row>
+            <div className='option1'>
+                <h1>Agregar Reseñas</h1>
+              </div>
+              <div className='formpadd'>
+                <Form>
+                  <Form.Group>
+                    <Form.Control type="file" onChange={handleFileChange}/>
+                  </Form.Group>
+                </Form>
+              </div>
+            </Row>
+            <Row>
+              <div className='centrarbot'>
+                <Button className='bot' variant="primary" type="submit" onClick={handlePredictions2}>
+                  Cargar archivo
+                </Button>
+              </div>
+            </Row>
+          </div>
+          <div className='reseña'>
+            <Row>
+            <div className='option1'>
+                <h1>Nueva Reseña</h1>
+              </div>
+            </Row>
+            <Row>
+              <div className='formpadd'>
+                <Form>
+                  <Form.Group>
+                    <Form.Control id="Review" as="textarea"  placeholder='Ingrese su reseña en este cuadro' value={review} onChange={handleReview}/>
+                  </Form.Group>
+                </Form>
+              </div>
+            </Row>
+            <Row>
+              <div className='centrarbot'>
+                <Button className='bot' variant="primary" type="submit" onClick={handlePredictions}>
+                  Ver resultados
+                </Button>
+              </div>
+            </Row>
+          </div>
         </div>
-      </Row>
-
-
-      <Row>
-        <h3 className='context-title'>Contexto del Problema</h3>
-        <p className='context'>
-        El Ministerio de Comercio, Industria y Turismo de Colombia, la Asociación Hotelera y Turística de Colombia – COTELCO, cadenas hoteleras de la talla de Hilton, Hoteles Estelar, Holiday Inn y hoteles pequeños ubicados en diferentes municipios de Colombia están interesados en analizar las características de sitios turísticos que los hacen atractivos para turistas locales o de otros países, ya sea para ir a conocerlos o recomendarlos. De igual manera, quieren comparar las características de dichos sitios, con aquellos que han obtenido bajas recomendaciones y que están afectando el número de turistas que llegan a ellos. Adicionalmente, quieren tener un mecanismo para determinar la calificación que tendrá un sitio por parte de los turistas y así, por ejemplo, aplicar estrategias para identificar oportunidades de mejora que permitan aumentar la popularidad de los sitios y fomentar el turismo.
-        </p>
-
-      </Row>
-
-      <Row>
-        <div className='greeting'>
-          <h3> Bienvenido, señor usuario! </h3>
+      </Col>
+      <Col className='contexto'>
+        <div >
+          <Row>
+            <h3 className='context-title'>Contexto del Problema</h3>
+            <p className='context'>
+              El Ministerio de Comercio, Industria y Turismo de Colombia, la Asociación Hotelera y Turística de Colombia – COTELCO, cadenas hoteleras de la talla de Hilton, Hoteles Estelar, Holiday Inn y hoteles pequeños ubicados en diferentes municipios de Colombia están interesados en analizar las características de sitios turísticos que los hacen atractivos para turistas locales o de otros países, ya sea para ir a conocerlos o recomendarlos. De igual manera, quieren comparar las características de dichos sitios, con aquellos que han obtenido bajas recomendaciones y que están afectando el número de turistas que llegan a ellos. Adicionalmente, quieren tener un mecanismo para determinar la calificación que tendrá un sitio por parte de los turistas y así, por ejemplo, aplicar estrategias para identificar oportunidades de mejora que permitan aumentar la popularidad de los sitios y fomentar el turismo.
+            </p>
+          </Row>
         </div>
-      </Row>
+      </Col>
+    </Row>
+  </div>
+</div>
 
-      <Row>
-        <div className='option1'>
-          <h1>Si desea agregar una reseña, por favor ingrésela aquí</h1>
-        </div>
-      </Row>
-      <Row>
-        <div className='formpadd'>
-        <Form>
-          <Form.Group>
-            <Form.Control  id="Review"  as="textarea" rows={5} placeholder='Ingrese su reseña en este cuadro'  value={review} onChange={handleReview}/>
-          </Form.Group>
-        </Form>
-        </div>
-      </Row>
-
-      <Row>
-        <div className='centrarbot'>
-        <Button className='bot' variant="primary" type="submit" onClick={handlePredictions}>
-          Hacer predicción
-        </Button>
-        </div>
-      </Row>
-
-
-
-
-      <Row>
-        <div className='centres'>
-          {!finished && <h3> Por favor espere, su predicción se está cargando... </h3>}
-          <h3> La reseña pertenece a la clase: {prediction} </h3>
-        </div>
-      </Row>
-
-      <Row>
-        <div className='option2'>
-          <h1>Si desea agregar muchas reseñas, por favor ingrese el archivo aquí</h1>
-        </div>
-      </Row>
-
-      <Row>
-        <div className='formpadd'>
-        <Form>
-          <Form.Group>
-            <Form.Control type="file" onChange={handleFileChange}/>
-          </Form.Group>
-        </Form>
-        </div>
-      </Row>
-
-      <Row>
-        <div className='centrarbot'>
-        <Button className='bot' variant="primary" type="submit" onClick={handlePredictions2}>
-          Generar archivo de predicción
-        </Button>
-        </div>
-      </Row>
-
-      <Row>
-        <div className='centres'>
-          {!finishedFile && <h3> Por favor espere, la predicción de su archivo se está cargando... </h3>}
-        </div>
-      </Row>
-
-      <Row>
-        <div style={{padding:'50px'}}></div>
-      </Row>
-    </div>
-    </div>
   );
 }
 

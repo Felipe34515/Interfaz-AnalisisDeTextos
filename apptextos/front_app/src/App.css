@@ -1,33 +1,77 @@
-.centrar{
-  display: flex;
+.Banner{
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 3rem;
 }
 
 .title{
   font-size: 50px;
-  text-align: center;
-  color: #ff3333;
+}
+
+.subtitle{
+  color: #9e9e9e;
+}
+
+.columnaderecha{
+  width: 45%;
+  display: flex;
+  justify-content: center;
+  float: left;
+}
+
+
+.archivo-reseña-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.archivo, .reseña {
+  flex: 1;
+  max-width: 90%;
+  border-radius: 10px;
+  background: #332A2A;
+  margin: 1%;
+  padding: 5%;
+}
+
+.contexto {
+  border-radius: 10px;
+  background: #332A2A;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0%;
+  padding: 2%;
+}
+
+
+.fondo {
+  background-color: #282121;
+  color: #ffffff;
+  padding: 50px;
 }
 
 
 .context-title{
+  
   font-size: 30px;
   text-align: center;
-  color: #ff3333;
+  color: #ffffff;
 }
 
 
 .context{
+  padding-top: 4%;
   font-size: 20px;
   text-align: center;
 }
 
 .formpadd{
-  padding-left: 15rem !important;
-  padding-right: 15rem !important;
+  padding-top: 1rem !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
   padding-bottom: 2rem !important;
 }
 
@@ -36,8 +80,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-top: 2rem;
-  color: #00ff00;
+
+  color: #ffffff;
 
 }
 
@@ -58,6 +102,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding-left: 5rem !important;
+  padding-right: 5rem !important;
 }
 
 
@@ -91,8 +137,3 @@
 
 
 
-.fondo {
-  background-color: #282c34;
-  color: #33ffff;
-  padding: 50px;
-}
