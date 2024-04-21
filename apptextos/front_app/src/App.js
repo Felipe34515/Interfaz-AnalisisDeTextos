@@ -1,169 +1,197 @@
-import React from 'react';
-import './App.css';
+import React, { useState } from 'react';
 import { Form, Row, Button, Col } from 'react-bootstrap';
-import { useState } from "react";
-
+import './App.css';
+import * as Papa from 'papaparse';
 
 function App() {
+  const [review, setReview] = useState('');
+  const [prediction, setPrediction] = useState('');
+  const [csvFile, setCsvFile] = useState(null);
 
-  const [review, setReview] = useState("");
-  const[finished, setFinished] = useState(true);
-  const[prediction, setPrediction] = useState(null);
-  const[file, setFile] = useState(null);
-  const[finishedFile, setFinishedFile] = useState(true);
+  // Maneja cambios en la reseña del usuario
+  const handleReviewChange = (event) => {
+    setReview(event.target.value);
+  };
 
-
-  const handleReview = (e) =>{
-    const res = e.target.value;
-    setReview(res)
-  }
-
-  const handleFileChange = (e)=>{
-
-    setFile(e.target.files[0]);
-
-  }
-
-  const handlePredictions = async (e)=>{
-
-    setFinished(false);
-
-    const requestBody = {
-      // Example data fields
-      res: review
-    };
-
-
+  // Realiza predicciones con la reseña ingresada por el usuario
+  const handlePredict = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/a', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(requestBody),
-      });
-
-      if (response.ok) {
-          const responseData = await response.json();
-          console.log(responseData);
-          setFinished(true);
-          setPrediction(responseData.pred)
-      } else {
-          console.error('Error:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error:', error.message);
-    }
-  }
-
-  const handlePredictions2 = async (e) => {
-
-    setFinishedFile(false);
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-      const response = await fetch('http://127.0.0.1:8000/b', {
+      const response = await fetch('http://127.0.0.1:8000/predict', {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ review }),
       });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        console.error(`Error en la solicitud: ${response.status} ${response.statusText}`);
+        return;
       }
 
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = "Predicciones"
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-      setFinishedFile(true);
-
+      const data = await response.json();
+      setPrediction(data.prediction);
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error al realizar la solicitud:", error);
     }
-  }
+  };
 
+  // Maneja cambios en el archivo CSV seleccionado por el usuario
+  const handleFileChange = (event) => {
+    setCsvFile(event.target.files[0]);
+  };
 
+  // Realiza predicciones con el archivo CSV seleccionado y genera un archivo CSV con predicciones
+  const handleCsvPredict = async () => {
+    if (!csvFile) {
+      console.error("No se ha seleccionado ningún archivo CSV.");
+      return;
+    }
+
+    Papa.parse(csvFile, {
+      header: true,
+      complete: async (results) => {
+        const predictions = [];
+
+        // Itera sobre cada fila en el archivo CSV
+        for (let row of results.data) {
+          // Verifica si la columna Review está presente y no vacía
+          if (!row.Review || row.Review.trim() === "") {
+            console.warn("Fila omitida debido a la ausencia o vacío de la columna 'Review'");
+            continue;
+          }
+
+          const reviewData = { review: row.Review };
+
+          try {
+            const response = await fetch('http://127.0.0.1:8000/predict', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(reviewData),
+            });
+
+            if (!response.ok) {
+              console.error(`Error en la solicitud: ${response.status} ${response.statusText}`);
+              continue;
+            }
+
+            const data = await response.json();
+
+            if (!data.prediction) {
+              console.error("La respuesta no contiene predicción:", data);
+              continue;
+            }
+
+            // Añade la predicción a la fila
+            row.Class = data.prediction;
+            predictions.push(row);
+          } catch (error) {
+            console.error("Error al realizar la solicitud:", error);
+          }
+        }
+
+        // Convierte las predicciones a CSV
+        const csv = Papa.unparse(predictions);
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'predictions.csv';
+        link.click();
+      },
+      error: (error) => {
+        console.error("Error al procesar el archivo CSV:", error);
+      }
+    });
+  };
 
   return (
-
-<div className='fondo'>
-  <div className="container">
-    <Row>
-      <div className='Banner'>
-        <h1 className="title">Proyecto analítica de Textos</h1>
-        <p className="subtitle">Grupo 15: Santiago Pardo, Felipe Rueda y Luis Plazas</p>
+    <div className='fondo'>
+      <div className="container">
+        <Row>
+          <div className='Banner'>
+            <h1 className="title">Proyecto analítica de Textos</h1>
+            <p className="subtitle">Grupo 15: Santiago Pardo, Felipe Rueda y Luis Plazas</p>
+          </div>
+        </Row>
+        <Row>
+          <Col className='columnaderecha'>
+            <div className='archivo-reseña-container'>
+              <div className='archivo'>
+                <Row>
+                  <div className='option1'>
+                    <h1>Agregar Reseñas</h1>
+                  </div>
+                  <div className='formpadd'>
+                    <Form>
+                      <Form.Group>
+                        <Form.Control
+                          type="file"
+                          onChange={handleFileChange}
+                        />
+                      </Form.Group>
+                    </Form>
+                  </div>
+                </Row>
+                <Row>
+                  <div className='centrarbot'>
+                    <Button className='bot' variant="primary" type="submit" onClick={handleCsvPredict}>
+                      Cargar archivo
+                    </Button>
+                  </div>
+                </Row>
+              </div>
+              <div className='reseña'>
+                <Row>
+                  <div className='option1'>
+                    <h1>Nueva Reseña</h1>
+                  </div>
+                </Row>
+                <Row>
+                  <div className='formpadd'>
+                    <Form.Control
+                      type="text"
+                      id="Review"
+                      as="textarea"
+                      placeholder='Escribe tu reseña aquí...'
+                      value={review}
+                      onChange={handleReviewChange}
+                    />
+                  </div>
+                </Row>
+                <Row>
+                  <div className='centrarbot'>
+                    <Button className='bot' variant="primary" type="submit" onClick={handlePredict}>
+                      Ver resultados
+                    </Button>
+                  </div>
+                </Row>
+                {/* Muestra la predicción de la reseña */}
+                {prediction && (
+                  <Row>
+                    <div className='prediction-result'>
+                      <p>La reseña ha recibido una calificación de: {prediction}/5</p>
+                    </div>
+                  </Row>
+                )}
+              </div>
+            </div>
+          </Col>
+          <Col className='contexto'>
+            <div>
+              <Row>
+                <h3 className='context-title'>Contexto del Problema</h3>
+                <p className='context'>
+                  El Ministerio de Comercio, Industria y Turismo de Colombia, junto con COTELCO y varias cadenas hoteleras, están interesados en evaluar y comparar las características de los sitios turísticos para entender qué los hace atractivos. Esta app sirve para analizar tanto los sitios populares como aquellos con bajas recomendaciones para identificar áreas de mejora. Además, de implementar un sistema de calificación que permita medir la popularidad de los sitios y desarrollar estrategias para incrementar su atractivo y promover el turismo.
+                </p>
+              </Row>
+            </div>
+          </Col>
+        </Row>
       </div>
-    </Row>
-    <Row>
-      <Col className='columnaderecha'>
-        <div className='archivo-reseña-container'>
-          <div className='archivo'>
-            <Row>
-            <div className='option1'>
-                <h1>Agregar Reseñas</h1>
-              </div>
-              <div className='formpadd'>
-                <Form>
-                  <Form.Group>
-                    <Form.Control type="file" onChange={handleFileChange}/>
-                  </Form.Group>
-                </Form>
-              </div>
-            </Row>
-            <Row>
-              <div className='centrarbot'>
-                <Button className='bot' variant="primary" type="submit" onClick={handlePredictions2}>
-                  Cargar archivo
-                </Button>
-              </div>
-            </Row>
-          </div>
-          <div className='reseña'>
-            <Row>
-            <div className='option1'>
-                <h1>Nueva Reseña</h1>
-              </div>
-            </Row>
-            <Row>
-              <div className='formpadd'>
-                <Form>
-                  <Form.Group>
-                    <Form.Control id="Review" as="textarea"  placeholder='Ingrese su reseña en este cuadro' value={review} onChange={handleReview}/>
-                  </Form.Group>
-                </Form>
-              </div>
-            </Row>
-            <Row>
-              <div className='centrarbot'>
-                <Button className='bot' variant="primary" type="submit" onClick={handlePredictions}>
-                  Ver resultados
-                </Button>
-              </div>
-            </Row>
-          </div>
-        </div>
-      </Col>
-      <Col className='contexto'>
-        <div >
-          <Row>
-            <h3 className='context-title'>Contexto del Problema</h3>
-            <p className='context'>
-              El Ministerio de Comercio, Industria y Turismo de Colombia, la Asociación Hotelera y Turística de Colombia – COTELCO, cadenas hoteleras de la talla de Hilton, Hoteles Estelar, Holiday Inn y hoteles pequeños ubicados en diferentes municipios de Colombia están interesados en analizar las características de sitios turísticos que los hacen atractivos para turistas locales o de otros países, ya sea para ir a conocerlos o recomendarlos. De igual manera, quieren comparar las características de dichos sitios, con aquellos que han obtenido bajas recomendaciones y que están afectando el número de turistas que llegan a ellos. Adicionalmente, quieren tener un mecanismo para determinar la calificación que tendrá un sitio por parte de los turistas y así, por ejemplo, aplicar estrategias para identificar oportunidades de mejora que permitan aumentar la popularidad de los sitios y fomentar el turismo.
-            </p>
-          </Row>
-        </div>
-      </Col>
-    </Row>
-  </div>
-</div>
-
+    </div>
   );
 }
 
